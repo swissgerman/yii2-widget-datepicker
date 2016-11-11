@@ -434,9 +434,12 @@ class DatePicker extends InputWidget
         $input = "jQuery('#{$id}')";
         $el = "jQuery('#" . $this->options['data-datepicker-source'] . "')";
         $this->registerPlugin($this->pluginName, $el);
-        if ($this->type === self::TYPE_INLINE) {
+        if ($this->type === self::TYPE_INLINE && isset($this->pluginOptions["multidate"]) && $this->pluginOptions["multidate"] == true) {
+            $view->registerJs("{$el}.on('changeDate',function(e){if({$input}.val() === ''){{$input}.val(e.format()).trigger('change');}else{{$input}.val({$input}.val()+','+e.format()).trigger('change')}});");
+        } else if ($this->type === self::TYPE_INLINE) {
             $view->registerJs("{$el}.on('changeDate',function(e){{$input}.val(e.format()).trigger('change')});");
         }
+
         if ($this->_hasAddon && $this->removeButton !== false) {
             $view->registerJs("initDPRemove('{$id}');");
         }
